@@ -21,6 +21,9 @@ public class EvilCorpBanking {
 		System.out.println("Welcome to Evil Corp Savings and Loan");
 		System.out.println("Please create the user account(s)");
 	
+		
+		
+		
 		System.out.print("Enter an account # or -1 to stop entering accounts : ");
 		accountno = sc.nextInt();
 		
@@ -56,6 +59,7 @@ public class EvilCorpBanking {
 		String transactiontype = sc.next();
 		sc.nextLine();
 
+		BankAccount getBankAccount = new BankAccount();
 		
 		while (!transactiontype.equalsIgnoreCase("-1"))
 		{	
@@ -63,10 +67,9 @@ public class EvilCorpBanking {
 			{
 				System.out.print("Enter the account # : ");
 				int getAccountNo = sc.nextInt();
-				BankAccount getBankAccount = myHashMap.get(getAccountNo);
-//				myBankAccount.setAccountno(sc.nextInt());
+				sc.nextLine();
+				getBankAccount = myHashMap.get(getAccountNo);
 				System.out.print("Enter the amount of the check : ");
-//				myTransaction.setAmtwithdrawl(sc.nextDouble());
 				double getCheckAmount = sc.nextDouble();
 				
 				getBankAccount.setBalance(getBankAccount.getBalance() - getCheckAmount);
@@ -81,21 +84,23 @@ public class EvilCorpBanking {
 					continue;
 				}
 				myTransaction.setDate(myDate);
-				myTransaction.setDate(myDate);
-				if (myBankAccount.getBalance() < 0)
+
+				if (getBankAccount.getBalance() < 0)
 				{
-					myBankAccount.setBalance(myBankAccount.getBalance() - 35);
+					getBankAccount.setBalance(getBankAccount.getBalance() - 35);
 				}
-				System.out.println("Current Balance: " + myBankAccount.getBalance());
+				System.out.println("Current Balance: " + getBankAccount.getBalance());
 				
 			}
 			else if (transactiontype.equalsIgnoreCase("Deposit"))
 			{
 				System.out.print("Enter the account # : ");
-				myBankAccount.setAccountno(sc.nextInt());
+				int getAccountNo = sc.nextInt();
+				sc.nextLine();
+				getBankAccount = myHashMap.get(getAccountNo);
 				System.out.print("Enter the amount of deposit : ");
-				myTransaction.setAmtdeposit(sc.nextDouble());
-				myBankAccount.setBalance(myBankAccount.getBalance() + myTransaction.getAmtdeposit());
+				double getCheckAmount = sc.nextDouble();
+				getBankAccount.setBalance(getBankAccount.getBalance() + getCheckAmount);
 				try {
 					System.out.print("Enter the date of the check (mm/dd/yyyy): ");
 					String datestring = sc.next();
@@ -106,7 +111,7 @@ public class EvilCorpBanking {
 					continue;
 				}
 
-				System.out.println("Current Balance: " + myBankAccount.getBalance());
+				System.out.println("Current Balance: " + getBankAccount.getBalance());
 			}
 
 			System.out.println();

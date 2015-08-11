@@ -6,6 +6,11 @@ public class BankAccount {
 	private int accountno;
 	private ArrayList<Transaction> transactions;
 	
+	public BankAccount()
+	{
+		transactions = new ArrayList<Transaction>();
+	}
+	
 	public String getName() {
 		return name;
 	}

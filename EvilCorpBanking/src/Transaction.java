@@ -2,30 +2,40 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 
-public class Transaction {
+public class Transaction implements Comparable<Transaction> {
 
-	private double amtwithdrawl, amtdeposit;
+	private double amount;
 	private Date date;
+	private boolean isDeposit = true;
 	
 
-	public double getAmtwithdrawl() {
-		return amtwithdrawl;
+	public double getAmount() {
+		return amount;
 	}
-	public void setAmtwithdrawl(double amtwithdrawl) {
-		this.amtwithdrawl = amtwithdrawl;
+	public void setAmount(double amount) {
+		this.amount = amount;
 	}
-	public double getAmtdeposit() {
-		return amtdeposit;
-	}
-	public void setAmtdeposit(double amtdeposit) {
-		this.amtdeposit = amtdeposit;
-	}
+
 	public Date getDate() {
 		return date;
 	}
 	public void setDate(Date date) {
 		this.date = date;
 
+	}
+	
+	
+	public boolean isDeposit() {
+		return isDeposit;
+	}
+	public void setDeposit(boolean isDeposit) {
+		this.isDeposit = isDeposit;
+	}
+	
+	@Override
+	public int compareTo(Transaction otherTransaction) {
+		// TODO Auto-generated method stub
+		return getDate().compareTo(otherTransaction.getDate());
 	}
 
 }
