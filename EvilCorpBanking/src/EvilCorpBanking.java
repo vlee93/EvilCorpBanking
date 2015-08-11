@@ -1,81 +1,61 @@
 import java.util.Scanner;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
-public class EvilCorpBanking {
+public class EvilCorpBanking 
+{
 
-	public static void main(String[] args){
+	public static void main(String[] args) {
 		
 		//initializing objects
 		Scanner sc = new Scanner(System.in);
-		BankAccount myBankAccount = new BankAccount();
-		Transaction myTransaction = new Transaction();
 		Date myDate = new Date();
 		SimpleDateFormat f = new SimpleDateFormat("MM/dd/yyyy");
 		HashMap<Integer, BankAccount> myHashMap = new HashMap<Integer, BankAccount>();
-		int accountno = 0;
-		
+	
 		//Prompt user to enter account information and store it
 		System.out.println("Welcome to Evil Corp Savings and Loan");
 		System.out.println("Please create the user account(s)");
-	
 		
-		
-		
-		System.out.print("Enter an account # or -1 to stop entering accounts : ");
-		accountno = sc.nextInt();
-		
-		while (accountno != -1)
-		{
-			if (!myHashMap.containsKey(accountno))
-			{
-				myBankAccount.setAccountno(accountno);
-				System.out.print("Enter the name for accout number " + accountno + " : ");
-				String name = sc.nextLine();
-				sc.nextLine();
-				myBankAccount.setName(name);
-				System.out.print("Enter the balance for account number " + accountno + " : ");
-				double balance = sc.nextDouble();
-				myBankAccount.setBalance(balance);
-				myHashMap.put(accountno, myBankAccount);
-				System.out.println("\r\r\r");
-			}
-			else
-			{
-				System.out.println("Bank Account already exists. \r");
-			}
-			
-			System.out.println("Enter an account # or -1 to stop entering accounts : ");
-			accountno = sc.nextInt();
-			sc.nextLine();
-			
-		}	
+		myHashMap = getBankAccount(myHashMap);
 		
 		System.out.println("\r\r");
-
+		
+		System.out.print("Please enter the account number that you would like to make a transaction for : ");
+		Integer getAccountNo = (Integer)sc.nextInt();
+		sc.nextLine();
+		
+		if (!myHashMap.containsKey(getAccountNo))
+		{
+			System.out.println("The account number you entered does not exist. Please create a new account. \r\r");
+			myHashMap = getBankAccount(myHashMap);
+		}
+		System.out.println("\r\r");
+		
+		BankAccount getBankAccount = new BankAccount();
+		
 		System.out.print("Enter a transaction type (Deposit or Withdrawal) or -1 to finish : ");
 		String transactiontype = sc.next();
 		sc.nextLine();
-
-		BankAccount getBankAccount = new BankAccount();
 		
 		while (!transactiontype.equalsIgnoreCase("-1"))
 		{	
+			Transaction myTransaction = new Transaction();
+			double getWithdrawalAmount = 0;
+			double getDepositAmount = 0;
 			if (transactiontype.equalsIgnoreCase("Withdrawal"))
 			{
-				System.out.print("Enter the account # : ");
-				int getAccountNo = sc.nextInt();
-				sc.nextLine();
+				myTransaction.setDeposit(false);
 				getBankAccount = myHashMap.get(getAccountNo);
-				System.out.print("Enter the amount of the check : ");
-				double getCheckAmount = sc.nextDouble();
-				
-				getBankAccount.setBalance(getBankAccount.getBalance() - getCheckAmount);
+				System.out.print("Enter the amount of the Withdrawal : ");
+				getWithdrawalAmount = sc.nextDouble();
 				
 				try {
-					System.out.print("Enter the date of the check : ");
+					System.out.print("Enter the date of the check (mm/dd/yyyy) : ");
 					String datestring = sc.next();
 					sc.nextLine();
 					myDate = f.parse(datestring);
@@ -83,24 +63,19 @@ public class EvilCorpBanking {
 					System.out.println("Please enter valid date");
 					continue;
 				}
-				myTransaction.setDate(myDate);
-
-				if (getBankAccount.getBalance() < 0)
-				{
-					getBankAccount.setBalance(getBankAccount.getBalance() - 35);
-				}
-				System.out.println("Current Balance: " + getBankAccount.getBalance());
 				
+				//Setting Transactions and adding to Array List
+				myTransaction.setAmount(getWithdrawalAmount);
+				myTransaction.setDate(myDate);
+				getBankAccount.addItemToArray(myTransaction);
+
 			}
 			else if (transactiontype.equalsIgnoreCase("Deposit"))
 			{
-				System.out.print("Enter the account # : ");
-				int getAccountNo = sc.nextInt();
-				sc.nextLine();
 				getBankAccount = myHashMap.get(getAccountNo);
 				System.out.print("Enter the amount of deposit : ");
-				double getCheckAmount = sc.nextDouble();
-				getBankAccount.setBalance(getBankAccount.getBalance() + getCheckAmount);
+				getDepositAmount = sc.nextDouble();
+
 				try {
 					System.out.print("Enter the date of the check (mm/dd/yyyy): ");
 					String datestring = sc.next();
@@ -110,10 +85,13 @@ public class EvilCorpBanking {
 					System.out.println("Please enter valid date");
 					continue;
 				}
-
-				System.out.println("Current Balance: " + getBankAccount.getBalance());
+				
+				//Setting Transactions and adding to Array List
+				myTransaction.setAmount(getDepositAmount);
+				myTransaction.setDate(myDate);
+				getBankAccount.addItemToArray(myTransaction);	
 			}
-
+			
 			System.out.println();
 			System.out.println();
 			System.out.print("Enter a transaction type (Deposit or Withdrawal) or -1 to finish : ");
@@ -121,7 +99,83 @@ public class EvilCorpBanking {
 			sc.nextLine();
 		}
 		
+		Collections.sort(getBankAccount.getTransactions());
+		for (Transaction transaction : getBankAccount.getTransactions())
+		{
+			if(transaction.isDeposit())
+			{
+				getBankAccount.setBalance(transaction.getAmount() + getBankAccount.getBalance()); 
+			}
+			else
+			{
+				getBankAccount.setBalance(getBankAccount.getBalance() - transaction.getAmount());
+				if (getBankAccount.getBalance() < 0)
+				{
+					getBankAccount.setBalance(getBankAccount.getBalance() - 35);
+				}
+			}
+			
+		}
+
 		
+		String formatstring = "%-50s%-50s\r";
+			
+		System.out.println("------------------------------------------------------Transactions Reciept------------------------------------------------------");
+		System.out.println("For Bank Account No : " + getAccountNo);
+		System.out.println("Name: " + getBankAccount.getName() + "\r");
+		System.out.format(formatstring, "Date", "Amount");
+		System.out.format(formatstring, "-----", "--------");
+		
+		for (int i = 0; i<getBankAccount.getTransactions().size(); i++)
+		{
+			String formatteddate = f.format(getBankAccount.getTransactions().get(i).getDate());
+			System.out.format(formatstring, formatteddate, getBankAccount.getTransactions().get(i).getAmount());
+		}
+		System.out.println("\r\r");
+		System.out.format ("%-100s","Total Balance : " + getBankAccount.getBalance());
+		
+		
+	}
+	
+	
+	
+	
+	public static HashMap<Integer, BankAccount> getBankAccount (HashMap<Integer, BankAccount> myHashMap)
+	{
+		BankAccount myBankAccount = new BankAccount();
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.print("Please enter an account number: ");
+		int accountno = sc.nextInt();
+		
+		while (accountno != -1)
+		{
+			if (!myHashMap.containsKey(accountno))
+			{
+				myBankAccount.setAccountno(accountno);
+				System.out.print("Enter the name for account number " + accountno + " : ");
+				sc.nextLine();
+				String name = sc.nextLine();
+				myBankAccount.setName(name);
+				System.out.print("Enter the balance for account number " + accountno + " : ");
+				double balance = sc.nextDouble();
+				myBankAccount.setBalance(balance);
+				System.out.print("Account has been created.");
+				System.out.println("\r\r\r");
+			}
+			else
+			{
+				System.out.print("Bank Account already exists. \r");
+			}
+			
+			System.out.print("Enter a account # to create another account, or -1 to stop entering accounts : ");
+			accountno = sc.nextInt();
+			sc.nextLine();
+			
+			myHashMap.put(myBankAccount.getAccountno(),myBankAccount);
+		}
+		
+		return myHashMap;
 	}
 	
 }
