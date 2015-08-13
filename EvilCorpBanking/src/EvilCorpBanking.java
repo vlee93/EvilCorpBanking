@@ -5,11 +5,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException;
 
 public class EvilCorpBanking 
 {
 
 	public static void main(String[] args) {
+		
+		//get filename
+		String filename = (System.getProperty("user.dir") + File.separatorChar + "EvilCorp.txt");
+		System.out.println(filename);
 		
 		//initializing objects
 		Scanner sc = new Scanner(System.in);
@@ -20,6 +29,7 @@ public class EvilCorpBanking
 		//Prompt user to enter account information and store it
 		System.out.println("Welcome to Evil Corp Savings and Loan");
 		System.out.println("Please create the user account(s)");
+		
 		
 		myHashMap = getBankAccount(myHashMap);
 		
@@ -177,5 +187,7 @@ public class EvilCorpBanking
 		
 		return myHashMap;
 	}
+	
+	public void writeToFile ()
 	
 }
